@@ -1,0 +1,108 @@
+/* VehicleReportForm.css */
+
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  background: #eee;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.a4-form {
+  width: 794px;
+  min-height: 1123px;
+  background: #fff;
+  padding: 20px;
+  border: 1px solid #000;
+  font-family: sans-serif;
+  font-size: 12px;
+}
+
+.form-header {
+  text-align: center;
+  line-height: 1.4;
+}
+
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  border: 1px solid black;
+  margin-top: 10px;
+  padding: 4px;
+}
+
+.checklist-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid black;
+  padding: 4px;
+}
+
+.checklist-input label {
+  margin-left: 5px;
+}
+
+.info-section {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.checkbox-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  border: 1px solid black;
+  padding: 8px;
+  margin-top: 12px;
+}
+
+.report-grid p {
+  margin-bottom: 4px;
+}
+
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  font-size: 11px;
+}
+
+.details-table th,
+.details-table td {
+  border: 1px solid black;
+  text-align: center;
+  padding: 4px;
+}
+
+.details-table input {
+  width: 100%;
+  padding: 2px;
+  box-sizing: border-box;
+}
+
+.footer-section {
+  margin-top: 20px;
+}
+
+.loading-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.signature-line {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
