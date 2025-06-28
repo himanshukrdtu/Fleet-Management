@@ -6,10 +6,14 @@ let io = null;
 
 export const initSocket = (httpServer) => {
   io = new Server(httpServer, {
-    cors: {
-      origin: "*",
-      methods: ["GET", "POST"],
-    },
+   cors: {
+    origin: [
+        "https://fleet-management-1-dpbb.onrender.com", // production frontend
+        "http://localhost:5173",                        // local dev
+      ],
+  methods: ["GET", "POST"],
+   
+},
   });
 
   io.on('connection', (socket) => {

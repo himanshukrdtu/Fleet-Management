@@ -11,7 +11,15 @@ dotenv.config(); // Load .env variables
 const app = express();
 
 // Middleware
-app.use(cors()); // Allow cross-origin requests
+app.use(
+  cors({
+    origin: [
+      "https://fleet-management-1-dpbb.onrender.com",
+      "http://localhost:5173",
+    ],
+     
+  })
+);
 app.use(express.json()); // Parse incoming JSON
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
 
