@@ -1,0 +1,216 @@
+* {
+  box-sizing: border-box;
+}
+
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  background: #eee;
+  min-height: 100vh;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.a4-form {
+  width: 100%;
+  max-width: 794px;
+  min-height: 1123px;
+  background: #fff;
+  padding: 20px;
+  border: 1px solid #000;
+  font-family: sans-serif;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-header {
+  text-align: center;
+  line-height: 1.4;
+}
+
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  border: 1px solid black;
+  margin-top: 10px;
+  padding: 4px;
+}
+
+.checklist-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid black;
+  padding: 4px;
+}
+
+.checklist-input label {
+  margin-left: 5px;
+}
+
+.checklist-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-ok {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-clear {
+  background-color: #f44336;
+  color: white;
+}
+
+.info-section {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.checkbox-line {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  border: 1px solid black;
+  padding: 8px;
+  margin-top: 12px;
+}
+
+.report-grid p {
+  margin-bottom: 4px;
+}
+
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 11px;
+}
+
+.details-table th,
+.details-table td {
+  border: 1px solid black;
+  text-align: center;
+  padding: 4px;
+}
+
+.details-table input,
+.details-table select {
+  width: 100%;
+  padding: 2px;
+  font-size: 11px;
+  box-sizing: border-box;
+}
+
+.footer-section {
+  border: 1px solid black;
+  padding: 10px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.footer-section label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.footer-section textarea {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 4px;
+  font-size: 12px;
+  resize: vertical;
+}
+
+.footer-section button {
+  display: inline-block;
+  margin-bottom: 15px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.pin-grid {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.pin-grid label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: normal;
+}
+
+.pin-grid input {
+  width: 100px;
+  padding: 4px;
+  font-size: 12px;
+}
+
+.loading-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.signature-line {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.dumper-trip-report {
+  border: 1px solid black;
+  padding: 10px;
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+.dumper-trip-report .section-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.dumper-trip-report .input-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.dumper-trip-report .input-grid div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  flex: 1 1 200px;
+}

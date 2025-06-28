@@ -28,6 +28,11 @@ const tripSchema = new mongoose.Schema({
     enum: ['running', 'completed'],
     default: 'running',
   },
+  formId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'VehicleReport', // ✅ reference to VehicleReport
+    required: true,
+  },
 });
 
 export default mongoose.model('Trip', tripSchema);

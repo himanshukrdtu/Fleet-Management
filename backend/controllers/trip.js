@@ -1,6 +1,8 @@
 // controllers/tripController.js
 import Trip from '../models/Trip.js';
 import { getIO } from '../socket.js';
+
+// @desc    Filter Trips
 export const filterTrips = async (req, res) => {
   const { userId, vehicleNumber, status, start, end } = req.query;
 
@@ -31,7 +33,8 @@ export const filterTrips = async (req, res) => {
       path: trip.path,
       userId: trip.userId._id,
       name: trip.userId.username,
-      role: trip.userId.role
+      role: trip.userId.role,
+      formId: trip.formId // ✅ include formId in response
     }));
 
     res.status(200).json(formatted);
@@ -40,22 +43,16 @@ export const filterTrips = async (req, res) => {
   }
 };
 
- 
 
 // @desc    Start a new trip
 // @route   POST /api/trips/start
 // @access  Public (or Protected if using auth)
-// controllers/trip.js
-
-
- 
-
 export const startTrip = async (req, res) => {
   try {
-    const { userId, vehicleNumber } = req.body;
+    const { userId, vehicleNumber, formId } = req.body;
 
-    if (!userId || !vehicleNumber) {
-      return res.status(400).json({ message: 'User ID and Vehicle Number are required' });
+    if (!userId || !vehicleNumber || !formId) {
+      return res.status(400).json({ message: 'User ID, Vehicle Number, and Form ID are required' });
     }
 
     // Check for existing running trip
@@ -68,6 +65,7 @@ export const startTrip = async (req, res) => {
     const trip = new Trip({
       userId,
       vehicleNumber,
+      formId, // ✅ save formId
       startedAt: new Date(),
       status: 'running',
     });
@@ -87,7 +85,8 @@ export const startTrip = async (req, res) => {
       path: populatedTrip.path,
       userId: populatedTrip.userId._id,
       name: populatedTrip.userId.username,
-      role: populatedTrip.userId.role
+      role: populatedTrip.userId.role,
+      formId: populatedTrip.formId // ✅ include in response
     };
 
     // 🔴 Emit tripStarted with formatted structure
@@ -100,25 +99,29 @@ export const startTrip = async (req, res) => {
 };
 
 
+// @desc    End a trip
+// @route   PUT /api/trips/end/:tripId
 export const endTrip = async (req, res) => {
   try {
+    console.log('Ending trip with ID:', req.params.tripId);
     const { tripId } = req.params;
     const trip = await Trip.findById(tripId);
+    // console.log('Found trip:', trip);
 
     if (!trip) {
       return res.status(404).json({ message: 'Trip not found' });
     }
-
+console.log('Trip status before ending:', trip.status);
     if (trip.status === 'completed') {
       return res.status(400).json({ message: 'Trip is already completed' });
     }
 
     trip.endedAt = new Date();
     trip.status = 'completed';
-
+console.log('Trip status after ending:', trip.status);
     await trip.save();
-
-    // 🔴 Emit tripEnded to all clients
+console.log('Trip after saving:', trip);
+    
     getIO().emit('tripEnded', tripId);
 
     res.status(200).json({ message: 'Trip ended', trip });

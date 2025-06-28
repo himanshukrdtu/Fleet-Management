@@ -12,7 +12,7 @@ import Register from './pages/Register';
 import DriverDashboard from './pages/DriverDashboard';
 import ManagerDashboard from './pages/ManagerDashboard';
 import 'leaflet/dist/leaflet.css';
-import VehicleReportForm from './pages/Form';
+import VehicleReportForm from './pages/StartForm';
 
 // import TripDetails from './pages/TripDetails';
 
@@ -33,7 +33,7 @@ function App() {
   return (
     <Router>
       <Navbar />
-      <VehicleReportForm/>
+       
 
       <Routes>
         <Route path="/" element={

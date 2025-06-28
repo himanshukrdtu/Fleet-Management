@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import tripRoutes from './routes/tripRoutes.js';
-
+import vehicleReportRoutes from './routes/vehicleReportRoutes.js';
 
 
 dotenv.config(); // Load .env variables
@@ -22,5 +22,6 @@ app.get('/', (req, res) => {
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/trips', tripRoutes);
+app.use('/api/vehicle-report', vehicleReportRoutes);
 
 export default app;
