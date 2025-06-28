@@ -12,6 +12,9 @@ import LiveMap from '../components/LiveMap';
 import { getSocket } from '../sockets/socket';
 import FullVehicleReportView from '../components/FullVehicleReportView';
 
+const BASE_URL = "https://fleet-management-bn9l.onrender.com";
+// const BASE_URL = "https://http://localhost:5000";
+
 const ManagerDashboard = () => {
   const dispatch = useDispatch();
   const { liveTrips, selectedTrip } = useSelector(state => state.trip);
@@ -30,7 +33,7 @@ const ManagerDashboard = () => {
   useEffect(() => {
     const fetchRunningTrips = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/trips/filterTrips?status=running');
+        const res = await axios.get(`${BASE_URL}/api/trips/filterTrips?status=running`);
         dispatch(setLiveTrips(res.data));
       } catch (err) {
         console.error('Error fetching running trips:', err);
@@ -61,7 +64,7 @@ const ManagerDashboard = () => {
     e.preventDefault();
     try {
       const params = new URLSearchParams(filters).toString();
-      const res = await axios.get(`http://localhost:5000/api/trips/filterTrips?${params}`);
+      const res = await axios.get(`${BASE_URL}/api/trips/filterTrips?${params}`);
       setFilteredTrips(res.data);
     } catch (err) {
       console.error('Failed to filter trips:', err);
@@ -71,7 +74,7 @@ const ManagerDashboard = () => {
   const handleViewDetail = async (trip) => {
     dispatch(setSelectedTrip(trip));
     try {
-      const res = await axios.get(`http://localhost:5000/api/vehicle-report/${trip.formId}`);
+      const res = await axios.get(`${BASE_URL}/api/vehicle-report/${trip.formId}`);
       console.log('Fetched form details:', res.data);
       setFormDetails(res.data);
     } catch (err) {

@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
+const BASE_URL = "https://fleet-management-bn9l.onrender.com";
+// const BASE_URL = "https://http://localhost:5000";
+
 const EndTripForm = ({ onClose, onSubmitSuccess }) => {
   const { driverTrips } = useSelector((state) => state.trip);
   const runningTrip = driverTrips.find((trip) => trip.status === 'running');
@@ -23,7 +26,7 @@ const EndTripForm = ({ onClose, onSubmitSuccess }) => {
     }
 
     try {
-      await axios.put(`http://localhost:5000/api/vehicle-report/update/${formId}`, {
+      await axios.put(`${BASE_URL}/api/vehicle-report/update/${formId}`, {
         closeHMR,
         closeKM
       });

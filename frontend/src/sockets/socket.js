@@ -1,10 +1,12 @@
 import { io } from 'socket.io-client';
 
 let socket = null;
+const BASE_URL = "https://fleet-management-bn9l.onrender.com";
+// const BASE_URL = "http://localhost:5000";
 
 export const connectSocket = (userId) => {
   if (!socket) {
-    socket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000', {
+    socket = io(BASE_URL, {
       query: { userId },
       transports: ['websocket'],
       autoConnect: true,

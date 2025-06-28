@@ -7,7 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { connectSocket } from '../sockets/socket';
 const API = import.meta.env.VITE_API_URL;
 
- 
+ const BASE_URL = "https://fleet-management-bn9l.onrender.com";
+// const BASE_URL = "https://http://localhost:5000";
 
 
 const Register = () => {
@@ -24,7 +25,7 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      const res = await  axios.post(`http://localhost:5000/api/auth/register`, form);
+      const res = await  axios.post(`${BASE_URL}/api/auth/register`, form);
       const user = res.data.user;
 
       dispatch(setUser(user));

@@ -21,6 +21,9 @@ const worksiteOptions = [
   'अन्य स्थल'
 ];
 
+const BASE_URL = "https://fleet-management-bn9l.onrender.com";
+// const BASE_URL = "https://http://localhost:5000";
+
 const VehicleReportForm = ({ onFormSubmit, onClose }) => {
   const { user } = useSelector((state) => state.auth);
   const [username] = useState(user ? user.username : 'him');
@@ -104,7 +107,7 @@ const VehicleReportForm = ({ onFormSubmit, onClose }) => {
     };
 
     try {
-      const response = await axios.post('http://localhost:5000/api/vehicle-report/submit', payload);
+      const response = await axios.post(`${BASE_URL}/api/vehicle-report/submit`, payload);
       const formId = response.data.formId;
 
       alert(`Form submitted! Form ID: ${formId}`);

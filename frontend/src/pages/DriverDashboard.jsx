@@ -7,6 +7,9 @@ import { getSocket } from '../sockets/socket';
 import VehicleReportForm from './StartForm';
 import EndTripForm from './EndTripForm';
 
+const BASE_URL = "https://fleet-management-bn9l.onrender.com";
+// const BASE_URL = "https://http://localhost:5000";
+
 const DriverDashboard = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
@@ -23,7 +26,7 @@ const DriverDashboard = () => {
 
   const fetchDriverTrips = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/trips/filterTrips?userId=${user.id}`);
+      const res = await axios.get(`${BASE_URL}/api/trips/filterTrips?userId=${user.id}`);
       const all = res.data;
 
       dispatch(setDriverTrips(all));
@@ -49,7 +52,7 @@ const DriverDashboard = () => {
     }
 
     try {
-      const res = await axios.post(`http://localhost:5000/api/trips/start`, {
+      const res = await axios.post(`${BASE_URL}/api/trips/start`, {
         userId: user.id,
         vehicleNumber,
         formId,
@@ -68,7 +71,7 @@ const DriverDashboard = () => {
 
   const endTrip = async () => {
     try {
-      await axios.put(`http://localhost:5000/api/trips/end/${currentTrip._id}`);
+      await axios.put(`${BASE_URL}/api/trips/end/${currentTrip._id}`);
       clearInterval(intervalRef.current);
       setCurrentTrip(null);
       setVehicleNumber('');
