@@ -1,27 +1,39 @@
+// EndTripForm.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
-const EndTripForm = ({ formId, onClose }) => {
+const EndTripForm = ({ onClose, onSubmitSuccess }) => {
+  const { driverTrips } = useSelector((state) => state.trip);
+  const runningTrip = driverTrips.find((trip) => trip.status === 'running');
+  const formId = runningTrip?.formId;
+
   const [closeHMR, setCloseHMR] = useState('');
   const [closeKM, setCloseKM] = useState('');
 
   const handleSubmit = async () => {
     if (!closeHMR.trim() || !closeKM.trim()) {
-      alert("Please fill both Close HMR and Close KM");
+      alert('Please fill both Close HMR and Close KM');
+      return;
+    }
+
+    if (!formId) {
+      alert('Form ID not found. Cannot update end details.');
       return;
     }
 
     try {
-      const res = await axios.put(`http://localhost:5000/api/vehicle-report/update/685f9b7365c2b91466133f89`, {
+      await axios.put(`http://localhost:5000/api/vehicle-report/update/${formId}`, {
         closeHMR,
-        closeKM 
+        closeKM
       });
 
-      alert("End trip data updated successfully");
-      onClose?.(); // Close the form if onClose prop exists
+      alert('End trip data updated successfully');
+      onSubmitSuccess?.(); // Notify parent to show "End Trip" button
+      onClose?.(); // Close the form popup/modal
     } catch (err) {
-      console.error("Error updating end trip data:", err);
-      alert("Failed to update end trip data");
+      console.error('Error updating end trip data:', err);
+      alert('Failed to update end trip data');
     }
   };
 

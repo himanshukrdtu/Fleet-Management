@@ -50,17 +50,18 @@ export const filterTrips = async (req, res) => {
 export const startTrip = async (req, res) => {
   try {
     const { userId, vehicleNumber, formId } = req.body;
-
+console.log('Starting trip with data:', req.body);
     if (!userId || !vehicleNumber || !formId) {
       return res.status(400).json({ message: 'User ID, Vehicle Number, and Form ID are required' });
     }
-
+console.log('Received data:', { userId, vehicleNumber, formId }); 
     // Check for existing running trip
     const existing = await Trip.findOne({ userId, status: 'running' });
     if (existing) {
+      console.log('Existing running trip found for user:', userId);
       return res.status(400).json({ message: 'A trip is already running for this user' });
     }
-
+   console.log('No existing running trip found for user:', userId);
     // Create and save trip
     const trip = new Trip({
       userId,

@@ -9,7 +9,8 @@ import {
 } from '../redux/slices/tripSlice';
 import { formatDistanceStrict } from 'date-fns';
 import LiveMap from '../components/LiveMap';
-import { getSocket } from '../sockets/socket'; // make sure this exists
+import { getSocket } from '../sockets/socket';
+import FullVehicleReportView from '../components/FullVehicleReportView';
 
 const ManagerDashboard = () => {
   const dispatch = useDispatch();
@@ -24,8 +25,8 @@ const ManagerDashboard = () => {
   });
 
   const [filteredTrips, setFilteredTrips] = useState([]);
+  const [formDetails, setFormDetails] = useState(null);
 
-  // Load initial running trips
   useEffect(() => {
     const fetchRunningTrips = async () => {
       try {
@@ -39,12 +40,10 @@ const ManagerDashboard = () => {
     fetchRunningTrips();
   }, [dispatch]);
 
-  // Setup socket listeners for live updates
   useEffect(() => {
     const socket = getSocket();
 
     socket.on('tripStarted', (trip) => {
-        console.log(trip);
       dispatch(addLiveTrip(trip));
     });
 
@@ -58,7 +57,6 @@ const ManagerDashboard = () => {
     };
   }, [dispatch]);
 
-  // Filter submission
   const handleFilterSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -70,9 +68,20 @@ const ManagerDashboard = () => {
     }
   };
 
+  const handleViewDetail = async (trip) => {
+    dispatch(setSelectedTrip(trip));
+    try {
+      const res = await axios.get(`http://localhost:5000/api/vehicle-report/${trip.formId}`);
+      console.log('Fetched form details:', res.data);
+      setFormDetails(res.data);
+    } catch (err) {
+      console.error('Failed to fetch form details:', err);
+      setFormDetails(null);
+    }
+  };
+
   return (
     <div style={{ display: 'flex', gap: '30px', padding: '20px' }}>
-      {/* Left Column - Running Trips */}
       <div style={{ flex: 1, borderRight: '1px solid #ccc', paddingRight: '20px' }}>
         <h2>Running Trips</h2>
         {liveTrips.length === 0 ? (
@@ -84,7 +93,7 @@ const ManagerDashboard = () => {
                 🚚 <strong>{trip.vehicleNumber}</strong> | 👤 {trip.name}
                 <button
                   style={{ marginLeft: '10px' }}
-                  onClick={() => dispatch(setSelectedTrip(trip))}
+                  onClick={() => handleViewDetail(trip)}
                 >
                   View Detail
                 </button>
@@ -94,7 +103,6 @@ const ManagerDashboard = () => {
         )}
       </div>
 
-      {/* Right Column - Filter + Trip Detail */}
       <div style={{ flex: 2 }}>
         <h2>Search Trips</h2>
         <form onSubmit={handleFilterSubmit} style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
@@ -116,7 +124,7 @@ const ManagerDashboard = () => {
               <li key={trip._id}>
                 📌 {trip.vehicleNumber} - {trip.name} ({trip.status})
                 <button
-                  onClick={() => dispatch(setSelectedTrip(trip))}
+                  onClick={() => handleViewDetail(trip)}
                   style={{ marginLeft: '10px' }}
                 >
                   View Detail
@@ -128,7 +136,14 @@ const ManagerDashboard = () => {
 
         {selectedTrip && (
           <div style={{ marginTop: '30px', padding: '20px', border: '1px solid gray' }}>
-            <h3>Trip Detail</h3>
+            <h3>📝 Trip Form Details</h3>
+            {formDetails ? (
+              <FullVehicleReportView form={formDetails} readOnly />
+            ) : (
+              <p>No form details available.</p>
+            )}
+
+            <h3>📍 Trip Live Path Info</h3>
             <p><strong>Operator:</strong> {selectedTrip.name}</p>
             <p><strong>Vehicle:</strong> {selectedTrip.vehicleNumber}</p>
             <p><strong>Start:</strong> {new Date(selectedTrip.startedAt).toLocaleString()}</p>
