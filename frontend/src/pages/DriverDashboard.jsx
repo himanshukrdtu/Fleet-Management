@@ -1,55 +1,43 @@
-import React, { useEffect, useState, useRef } from 'react';
+ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
-import { setDriverTrips } from '../redux/slices/tripSlice';
+import { setDriverTrips, setSelectedTrip } from '../redux/slices/tripSlice';
 import LiveMap from '../components/LiveMap';
-import { getSocket } from '../sockets/socket';
 import VehicleReportForm from './StartForm';
 import EndTripForm from './EndTripForm';
+import FullVehicleReportView from '../components/FullVehicleReportView';
+import { formatDistanceStrict } from 'date-fns';
 
 const BASE_URL = "https://fleet-management-bn9l.onrender.com";
-// const BASE_URL = "https://http://localhost:5000";
 
 const DriverDashboard = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { driverTrips } = useSelector((state) => state.trip);
+  const { driverTrips, selectedTrip } = useSelector((state) => state.trip);
 
-  const [vehicleNumber, setVehicleNumber] = useState('');
-  const [path, setPath] = useState([]);
-  const [currentTrip, setCurrentTrip] = useState(null);
   const [formId, setFormId] = useState(null);
+  const [vehicleNumber, setVehicleNumber] = useState('');
+  const [currentTrip, setCurrentTrip] = useState(null);
   const [showStartForm, setShowStartForm] = useState(false);
   const [showEndForm, setShowEndForm] = useState(false);
   const [isEndFormSubmitted, setIsEndFormSubmitted] = useState(false);
-  const intervalRef = useRef(null);
+  const [formDetails, setFormDetails] = useState(null);
 
   const fetchDriverTrips = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/api/trips/filterTrips?userId=${user.id}`);
-      const all = res.data;
-
-      dispatch(setDriverTrips(all));
-
-      const live = all.find(t => t.status === 'running');
+      dispatch(setDriverTrips(res.data));
+      const live = res.data.find(t => t.status === 'running');
       setCurrentTrip(live || null);
-      setFormId(live?.formId || null); // ✅ extract formId from live trip
-      setPath((live || all[all.length - 1])?.path || []);
+      setFormId(live?.formId || null);
     } catch (err) {
       console.error('Failed to fetch driver trips:', err);
     }
   };
 
   const startTrip = async () => {
-    if (!vehicleNumber.trim()) {
-      alert("Please enter vehicle number");
-      return;
-    }
-
-    if (!formId) {
-      alert("Please fill trip start form first.");
-      return;
-    }
+    if (!vehicleNumber.trim()) return alert('Enter vehicle number');
+    if (!formId) return alert('Please fill start form');
 
     try {
       const res = await axios.post(`${BASE_URL}/api/trips/start`, {
@@ -57,80 +45,39 @@ const DriverDashboard = () => {
         vehicleNumber,
         formId,
       });
-
       setCurrentTrip(res.data.trip);
-      setFormId(res.data.trip.formId); // ✅ store returned formId (redundant but safe)
-      setPath([]);
       setIsEndFormSubmitted(false);
       fetchDriverTrips();
     } catch (err) {
-      alert('Error starting trip');
       console.error(err);
+      alert('Failed to start trip');
     }
   };
 
   const endTrip = async () => {
     try {
       await axios.put(`${BASE_URL}/api/trips/end/${currentTrip._id}`);
-      clearInterval(intervalRef.current);
       setCurrentTrip(null);
-      setVehicleNumber('');
       setFormId(null);
+      setVehicleNumber('');
       setIsEndFormSubmitted(false);
       fetchDriverTrips();
     } catch (err) {
-      alert('Failed to end trip');
       console.error(err);
+      alert('Failed to end trip');
     }
   };
 
-  useEffect(() => {
-    if (!currentTrip) return;
-
-    const socket = getSocket();
-
-    intervalRef.current = setInterval(() => {
-      if ('geolocation' in navigator) {
-        try {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const location = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-                time: new Date(),
-              };
-
-              socket.emit('locationUpdate', {
-                userId: user.id,
-                tripId: currentTrip._id,
-                location,
-              });
-            },
-            (error) => {
-              console.warn('Geolocation error:', error.message);
-            }
-          );
-        } catch (error) {
-          console.error('Geolocation fetch error:', error.message);
-        }
-      }
-    }, 5000);
-
-    return () => clearInterval(intervalRef.current);
-  }, [currentTrip]);
-
-  useEffect(() => {
-    const socket = getSocket();
-
-    const handleLocation = ({ userId, location }) => {
-      if (userId === user.id) {
-        setPath(prev => [...prev, location]);
-      }
-    };
-
-    socket.on('newLocation', handleLocation);
-    return () => socket.off('newLocation', handleLocation);
-  }, [user.id]);
+  const handleViewDetail = async (trip) => {
+    dispatch(setSelectedTrip(trip));
+    try {
+      const res = await axios.get(`${BASE_URL}/api/vehicle-report/${trip.formId}`);
+      setFormDetails(res.data);
+    } catch (err) {
+      console.error('Failed to fetch form details:', err);
+      setFormDetails(null);
+    }
+  };
 
   useEffect(() => {
     fetchDriverTrips();
@@ -139,8 +86,8 @@ const DriverDashboard = () => {
   const previousTrips = driverTrips.filter(t => t.status === 'completed');
 
   return (
-    <div style={{ display: 'flex', gap: '20px', padding: '20px' }}>
-      <div style={{ flex: 1 }}>
+    <div style={{ display: 'flex', gap: '30px', padding: '20px' }}>
+      <div style={{ flex: 1, borderRight: '1px solid #ccc', paddingRight: '20px' }}>
         <h2>Welcome, {user.username}</h2>
 
         {!currentTrip ? (
@@ -197,21 +144,40 @@ const DriverDashboard = () => {
           </>
         )}
 
-        <h3>Previous Trips</h3>
+        <h3>Your Previous Trips</h3>
         <ul>
-          {previousTrips.map((trip) => (
+          {driverTrips.map((trip) => (
             <li key={trip._id}>
-              ID: {trip._id} | Vehicle: {trip.vehicleNumber} | Status: {trip.status}
+              📦 {trip.vehicleNumber} | {trip.status}
+              <button onClick={() => handleViewDetail(trip)} style={{ marginLeft: '10px' }}>
+                View Detail
+              </button>
             </li>
           ))}
         </ul>
       </div>
 
-      <div style={{ flex: 1, border: '1px solid #ccc', height: '400px' }}>
-        <h3 style={{ textAlign: 'center' }}>
-          {currentTrip ? 'Live Trip Map' : 'Last Trip Path'}
-        </h3>
-        <LiveMap path={Array.isArray(path) ? path : []} />
+      <div style={{ flex: 2 }}>
+        {selectedTrip && (
+          <div style={{ padding: '20px', border: '1px solid gray' }}>
+             
+             
+
+            <h3>📍 Trip Path Info</h3>
+            <p><strong>Vehicle:</strong> {selectedTrip.vehicleNumber}</p>
+            <p><strong>Start:</strong> {new Date(selectedTrip.startedAt).toLocaleString()}</p>
+            <p><strong>End:</strong> {selectedTrip.endedAt ? new Date(selectedTrip.endedAt).toLocaleString() : 'Running...'}</p>
+            <p><strong>Duration:</strong>
+              {selectedTrip.endedAt
+                ? formatDistanceStrict(new Date(selectedTrip.startedAt), new Date(selectedTrip.endedAt))
+                : formatDistanceStrict(new Date(selectedTrip.startedAt), new Date()) + ' (ongoing)'}
+            </p>
+
+            <div style={{ height: '400px', marginTop: '20px' }}>
+              <LiveMap path={selectedTrip.path || []} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
