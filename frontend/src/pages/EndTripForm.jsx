@@ -2,9 +2,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import { BASE_URL } from '../config';
 
-const BASE_URL = "https://fleet-management-bn9l.onrender.com";
-// const BASE_URL = "https://http://localhost:5000";
+// const BASE_URL = "https://fleet-management-bn9l.onrender.com";
+ 
 
 const EndTripForm = ({ onClose, onSubmitSuccess }) => {
   const { driverTrips } = useSelector((state) => state.trip);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import './StartForm.css';
 import axios from 'axios';
+import { BASE_URL } from '../config';
 const checklistItems = [
   'पार्किंग ब्रेक', 'लाइट्स और हॉर्न', 'डैशबोर्ड',
   'लाइट्स वाइपर', 'साइंट बोर्ड', 'बैठक सीट/सुरक्षा बेल्ट',
@@ -21,8 +22,7 @@ const worksiteOptions = [
   'अन्य स्थल'
 ];
 
-const BASE_URL = "https://fleet-management-bn9l.onrender.com";
-// const BASE_URL = "https://http://localhost:5000";
+ 
 
 const VehicleReportForm = ({ onFormSubmit, onClose }) => {
   const { user } = useSelector((state) => state.auth);

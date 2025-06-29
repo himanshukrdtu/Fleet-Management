@@ -1,9 +1,7 @@
 import { io } from 'socket.io-client';
-
+import { BASE_URL } from '../config';
 let socket = null;
-const BASE_URL = "https://fleet-management-bn9l.onrender.com";
-// const BASE_URL = "http://localhost:5000";
-
+ 
 export const connectSocket = (userId) => {
   if (!socket) {
     socket = io(BASE_URL, {

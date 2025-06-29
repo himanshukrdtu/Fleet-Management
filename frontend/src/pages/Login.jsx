@@ -4,10 +4,8 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../redux/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { connectSocket } from '../sockets/socket';
-const API = import.meta.env.VITE_API_URL;
-const BASE_URL = "https://fleet-management-bn9l.onrender.com";
-// const BASE_URL = "https://http://localhost:5000";
-
+ import { BASE_URL } from '../config';
+ 
 const Login = () => {
   const [form, setForm] = useState({ username: '', password: '' });
   const dispatch = useDispatch();

@@ -5,15 +5,17 @@ import {
   setLiveTrips,
   addLiveTrip,
   removeLiveTrip,
-  setSelectedTrip
+  setSelectedTrip,
+  updateLiveTripPathInLiveTrips,
+  updateSelectedTripPath,
 } from '../redux/slices/tripSlice';
 import { formatDistanceStrict } from 'date-fns';
 import LiveMap from '../components/LiveMap';
 import { getSocket } from '../sockets/socket';
 import FullVehicleReportView from '../components/FullVehicleReportView';
+import { BASE_URL } from '../config';
 
-const BASE_URL = "https://fleet-management-bn9l.onrender.com";
-// const BASE_URL = "https://http://localhost:5000";
+ 
 
 const ManagerDashboard = () => {
   const dispatch = useDispatch();
@@ -54,9 +56,15 @@ const ManagerDashboard = () => {
       dispatch(removeLiveTrip(tripId));
     });
 
+    socket.on('liveLocation', ({ userId, tripId, location }) => {
+      dispatch(updateLiveTripPathInLiveTrips({ tripId, location }));
+      dispatch(updateSelectedTripPath({ tripId, location }));
+    });
+
     return () => {
       socket.off('tripStarted');
       socket.off('tripEnded');
+      socket.off('liveLocation');
     };
   }, [dispatch]);
 
@@ -75,7 +83,6 @@ const ManagerDashboard = () => {
     dispatch(setSelectedTrip(trip));
     try {
       const res = await axios.get(`${BASE_URL}/api/vehicle-report/${trip.formId}`);
-      console.log('Fetched form details:', res.data);
       setFormDetails(res.data);
     } catch (err) {
       console.error('Failed to fetch form details:', err);

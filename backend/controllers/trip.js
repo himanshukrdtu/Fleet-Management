@@ -50,18 +50,18 @@ export const filterTrips = async (req, res) => {
 export const startTrip = async (req, res) => {
   try {
     const { userId, vehicleNumber, formId } = req.body;
-console.log('Starting trip with data:', req.body);
+// console.log('Starting trip with data:', req.body);
     if (!userId || !vehicleNumber || !formId) {
       return res.status(400).json({ message: 'User ID, Vehicle Number, and Form ID are required' });
     }
-console.log('Received data:', { userId, vehicleNumber, formId }); 
+// console.log('Received data:', { userId, vehicleNumber, formId }); 
     // Check for existing running trip
     const existing = await Trip.findOne({ userId, status: 'running' });
     if (existing) {
-      console.log('Existing running trip found for user:', userId);
+      // console.log('Existing running trip found for user:', userId);
       return res.status(400).json({ message: 'A trip is already running for this user' });
     }
-   console.log('No existing running trip found for user:', userId);
+  //  console.log('No existing running trip found for user:', userId);
     // Create and save trip
     const trip = new Trip({
       userId,
@@ -104,7 +104,7 @@ console.log('Received data:', { userId, vehicleNumber, formId });
 // @route   PUT /api/trips/end/:tripId
 export const endTrip = async (req, res) => {
   try {
-    console.log('Ending trip with ID:', req.params.tripId);
+    // console.log('Ending trip with ID:', req.params.tripId);
     const { tripId } = req.params;
     const trip = await Trip.findById(tripId);
     // console.log('Found trip:', trip);
@@ -112,16 +112,16 @@ export const endTrip = async (req, res) => {
     if (!trip) {
       return res.status(404).json({ message: 'Trip not found' });
     }
-console.log('Trip status before ending:', trip.status);
+// console.log('Trip status before ending:', trip.status);
     if (trip.status === 'completed') {
       return res.status(400).json({ message: 'Trip is already completed' });
     }
 
     trip.endedAt = new Date();
     trip.status = 'completed';
-console.log('Trip status after ending:', trip.status);
+// console.log('Trip status after ending:', trip.status);
     await trip.save();
-console.log('Trip after saving:', trip);
+// console.log('Trip after saving:', trip);
     
     getIO().emit('tripEnded', tripId);
 

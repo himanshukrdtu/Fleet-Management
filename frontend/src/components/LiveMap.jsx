@@ -30,6 +30,7 @@ const FitBounds = ({ path }) => {
 };
 
 const LiveMap = ({ path = [] }) => {
+  // console.log('LiveMap path:', path);
   const center = path.length > 0 ? path[path.length - 1] : { lat: 28.6139, lng: 77.2090 };
 
   return (

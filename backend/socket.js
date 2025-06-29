@@ -21,7 +21,7 @@ export const initSocket = (httpServer) => {
 
     socket.on('locationUpdate', async ({ userId, tripId, location }) => {
       try {
-        console.log(`📍 Location update from user ${userId} for trip ${tripId}:`, location);
+        // console.log(`📍 Location update from user ${userId} for trip ${tripId}:`, location);
         await Trip.findByIdAndUpdate(tripId, {
           $push: { path: location }
         });

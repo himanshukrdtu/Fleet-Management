@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  liveTrips: [],          // all currently running trips
-  driverTrips: [],        // for logged-in driver
-  selectedTrip: null,     // selected trip for detail view
+  liveTrips: [],
+  driverTrips: [],
+  selectedTrip: null,
 };
 
 const tripSlice = createSlice({
@@ -30,6 +30,35 @@ const tripSlice = createSlice({
       state.driverTrips = [];
       state.selectedTrip = null;
     },
+
+    // ✅ For updating running trip path in driver's trip list
+    updateLiveTripPath(state, action) {
+      const { tripId, location } = action.payload;
+      const trip = state.driverTrips.find(t => t._id === tripId && t.status === 'running');
+      if (trip) {
+        if (!trip.path) trip.path = [];
+        trip.path.push(location);
+      }
+    },
+
+    // ✅ For updating path inside liveTrips in manager's dashboard
+    updateLiveTripPathInLiveTrips(state, action) {
+      const { tripId, location } = action.payload;
+      const trip = state.liveTrips.find(t => t._id === tripId && t.status === 'running');
+      if (trip) {
+        if (!trip.path) trip.path = [];
+        trip.path.push(location);
+      }
+    },
+
+    // ✅ NEW: For updating selectedTrip.path in any view (manager or driver)
+    updateSelectedTripPath(state, action) {
+      const { tripId, location } = action.payload;
+      if (state.selectedTrip && state.selectedTrip._id === tripId) {
+        if (!state.selectedTrip.path) state.selectedTrip.path = [];
+        state.selectedTrip.path.push(location);
+      }
+    },
   },
 });
 
@@ -40,6 +69,9 @@ export const {
   setDriverTrips,
   setSelectedTrip,
   clearTripState,
+  updateLiveTripPath,
+  updateLiveTripPathInLiveTrips,
+  updateSelectedTripPath, // ✅ Exported reducer for selectedTrip.path
 } = tripSlice.actions;
 
 export default tripSlice.reducer;

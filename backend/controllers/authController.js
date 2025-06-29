@@ -3,7 +3,7 @@ import User from '../models/User.js';
 
 export const registerUser = async (req, res) => {
 
-    console.log('Registering user:', req.body);
+    // console.log('Registering user:', req.body);
   const { username, password, role } = req.body;
 
   if (!username || !password || !role) {
@@ -32,7 +32,7 @@ export const registerUser = async (req, res) => {
 
 
 export const loginUser = async (req, res) => {
-    console.log('Logging in user:', req.body);
+    // console.log('Logging in user:', req.body);
   const { username, password } = req.body;
 
   if (!username || !password)

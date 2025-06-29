@@ -5,10 +5,9 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../redux/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { connectSocket } from '../sockets/socket';
-const API = import.meta.env.VITE_API_URL;
+import { BASE_URL } from '../config';
 
- const BASE_URL = "https://fleet-management-bn9l.onrender.com";
-// const BASE_URL = "https://http://localhost:5000";
+ 
 
 
 const Register = () => {
