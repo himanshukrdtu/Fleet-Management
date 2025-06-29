@@ -133,7 +133,7 @@ const DriverDashboard = () => {
   }, []);
 
   return (
-    <div style={{ display: 'flex', gap: '30px', padding: '20px' }}>
+    <div style={{  gap: '30px', padding: '20px' }}>
       <div style={{ flex: 1, borderRight: '1px solid #ccc', paddingRight: '20px' }}>
         <h2>Welcome, {user.username}</h2>
 
